@@ -1,0 +1,109 @@
+     1                                  ; Dylan Resha
+     2                                  ; Assignment 5 Matrix Managment
+     3                                  ; 10/09/2020
+     4                                  ;  Write an assembly language program, named matman.asm, in a folder named p5,  that defines an arbitrary two-dimensional array of signed integers in the data segment.  You should also define constants ROWS and COLS
+     5                                  
+     6                                  ROWS:   EQU     5       ; defines a constant ROWS set to 5.
+     7                                  COLS:   EQU     7       ; defines a constant COLS set to 7.
+     8                                   
+     9                                  
+    10                                  SECTION .data
+    11                                  ; define data/variables here.  Think DB, DW, DD, DQ
+    12                                  
+    13                                  
+    14 00000000 010000000200000003-     MyMatrix: 	dd	 1,  2,  3,  4,  5,  6,  7
+    15 00000009 000000040000000500-
+    16 00000012 000006000000070000-
+    17 0000001B 00                 
+    18 0000001C 08000000090000000A-     	    	dd	 8,  9, 10, 11, 12, 13, 14
+    19 00000025 0000000B0000000C00-
+    20 0000002E 00000D0000000E0000-
+    21 00000037 00                 
+    22 00000038 0F0000001000000011-     		dd	15, 16, 17, 18, 19, 20, 21
+    23 00000041 000000120000001300-
+    24 0000004A 000014000000150000-
+    25 00000053 00                 
+    26 00000054 160000001700000018-     		dd	22, 23, 24, 25, 26, 27, 28
+    27 0000005D 000000190000001A00-
+    28 00000066 00001B0000001C0000-
+    29 0000006F 00                 
+    30 00000070 1D0000001E0000001F-     		dd	29, 30, 31, 32, 33, 34, 35
+    31 00000079 000000200000002100-
+    32 00000082 000022000000230000-
+    33 0000008B 00                 
+    34                                  SECTION .bss
+    35                                  ; define uninitialized data here
+    36                                  
+    37 00000000 <res 00000014>          RowSums:	RESD ROWS
+    38 00000014 <res 0000001C>          ColSums:	RESD COLS
+    39 00000030 <res 00000004>          Sum:		RESD 1
+    40 00000034 <res 00000004>          saveECX: 	RESD 1
+    41                                  
+    42                                  SECTION .text
+    43                                  global _main
+    44                                  _main:
+    45                                  ; put your code here
+    46                                  	
+    47 00000000 B905000000                      mov     ecx,ROWS
+    48 00000005 B800000000              	mov     eax,0
+    49                                             
+    50                                  Routter:
+    51                                  
+    52 0000000A 890D[34000000]                  mov     [saveECX],ecx   ;;;   Save this loop count so you can start another loop count
+    53                                  ;;inner loop
+    54 00000010 B907000000                      mov     ecx,COLS           
+    55                                  Rinner:
+    56                                  	inin:
+    57 00000015 038409[00000000]        	add	eax,[MyMatrix+ecx*2]
+    58 0000001C E2F7                            loop    Rinner           
+    59 0000001E 8B0D[34000000]                  mov     ecx,[saveECX]   ;;;   Restore outter loops count
+    60 00000024 898409[00000000]                mov     [RowSums+ecx*2],eax
+    61 0000002B E2DD                    	loop    Routter          
+    62                                  
+    63                                  
+    64                                  break:
+    65                                  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    66                                  ;;coloumns sum
+    67 0000002D B907000000                      mov     ecx,COLS
+    68 00000032 BB00000000                      mov     ebx,0
+    69                                  
+    70                                  coutter:
+    71                                  
+    72                                          ;mov    [RowSums+ecx*4],eax
+    73 00000037 890D[34000000]                  mov     [saveECX],ecx   ;;;   Save this loop count so you can start another loop count
+    74                                  ;;inner loop
+    75 0000003D B905000000                      mov     ecx,ROWS
+    76                                  cinner:
+    77                                          
+    78 00000042 039C09[00000000]                add     ebx,[MyMatrix+ecx*2]
+    79 00000049 E2F7                            loop    cinner
+    80 0000004B 8B0D[34000000]                  mov     ecx,[saveECX]   ;;;   Restore outter loops count
+    81 00000051 899C09[14000000]                mov     [ColSums+ecx*2],ebx
+    82 00000058 E2DD                            loop    coutter
+    83                                  ;;total sum
+    84 0000005A B907000000                      mov     ecx,COLS
+    85 0000005F BA00000000                      mov     edx,0
+    86                                  
+    87                                  toutter:
+    88                                  
+    89                                          ;mov    [RowSums+ecx*4],eax
+    90 00000064 890D[34000000]                  mov     [saveECX],ecx   ;;;   Save this loop count so you can start another loop count
+    91                                  ;;inner loop
+    92 0000006A B905000000                      mov     ecx,ROWS
+    93                                  tinner:
+    94                                  
+    95 0000006F 039409[00000000]                add     edx,[MyMatrix+ecx*2]
+    96 00000076 E2F7                            loop    tinner
+    97 00000078 8B0D[34000000]                  mov     ecx,[saveECX]   ;;;   Restore outter loops count
+    98 0000007E E2E4                            loop    toutter
+    99                                  
+   100 00000080 8915[30000000]          mov [Sum],edx
+   101                                  
+   102                                  total:
+   103                                  		
+   104                                  	
+   105                                  lastBreak:
+   106                                  ; Normal termination code
+   107 00000086 B801000000              mov eax, 1
+   108 0000008B BB00000000              mov ebx, 0
+   109 00000090 CD80                    int 80h

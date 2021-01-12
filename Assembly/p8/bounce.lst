@@ -1,0 +1,175 @@
+     1                                  ; Dylan Resha	
+     2                                  ; 11/6/2020
+     3                                  ; Asignment 8 Bounce
+     4                                  ;For this assignment you are to create an assembly language program named bounce.asm that will perpetually  “bounce” a message from left to right, and back on your console screen.
+     5                                  %macro Print 2
+     6                                  	 mov eax, 4     ; syswrite
+     7                                           mov ebx, 1     ; stdout
+     8                                           mov ecx, %1    ; starting address of string
+     9                                           mov edx, %2  ; len of string
+    10                                           int 80h
+    11                                  
+    12                                  %endmacro
+    13                                  
+    14                                  %macro setCursor 2
+    15                                  
+    16                                          mov     ah,%1
+    17                                          mov     al,%2
+    18                                          call   	cursor
+    19                                  
+    20                                  %endmacro
+    21                                  
+    22                                  SECTION .data
+    23                                  
+    24 00000000 20                      message:	db	" "  ;;; one space
+    25 00000001 4861766520596F7520-     		db	"Have You heard the tale of Darth Plaguis the Wise"
+    26 0000000A 686561726420746865-
+    27 00000013 2074616C65206F6620-
+    28 0000001C 446172746820506C61-
+    29 00000025 677569732074686520-
+    30 0000002E 57697365           
+    31 00000032 20                      		db	" "  ;;; one more space
+    32                                  msglen:	EQU	($-message)
+    33                                  
+    34                                  
+    35                                  ; counter:	db	0
+    36                                  ; Clear Screen control characters 
+    37 00000033 1B5B324A                cls	db	1bh, '[2J' 
+    38                                  
+    39                                  ; Set cursor position control characters
+    40 00000037 1B5B                    pos	db	1bh, '[' 
+    41 00000039 3030                    row	db	'00'
+    42 0000003B 3B                      	db	';'
+    43 0000003C 3030                    col	db	'00'
+    44 0000003E 48                      	db	'H'
+    45                                  
+    46                                  ; Data structure 
+    47 0000003F 0000000000E1F505        sec	dd	0,100000000
+    48 00000047 00                      count	db	0 ;;our counter that denotes the current coloumn
+    49                                  
+    50                                  SECTION .text
+    51                                  global _main, _sleep, cursor, _clrscr
+    52                                  _main:
+    53                                  
+    54 00000000 BD00000000              mov ebp,0
+    55 00000005 892D[47000000]          mov [count],ebp;;making sure count is 0
+    56                                  ;;;;  call _setcursor   pass ah=row, al=col
+    57                                  
+    58                                  inctop:;;incrementing loop
+    59 0000000B E8E6000000              call _clrscr
+    60                                  	setCursor 10,[count];;positions the cursor for printing
+    61                              <1> 
+    62 00000010 B40A                <1>  mov ah,%1
+    63 00000012 A0[47000000]        <1>  mov al,%2
+    64 00000017 E87B000000          <1>  call cursor
+    65                              <1> 
+    66                                  	Print message,msglen;; prints our message
+    67 0000001C B804000000          <1>  mov eax, 4
+    68 00000021 BB01000000          <1>  mov ebx, 1
+    69 00000026 B9[00000000]        <1>  mov ecx, %1
+    70 0000002B BA33000000          <1>  mov edx, %2
+    71 00000030 CD80                <1>  int 80h
+    72                              <1> 
+    73 00000032 E8AB000000              	call    _sleep;; sleep to slow down the bounce
+    74                                  
+    75 00000037 8B2D[47000000]          	mov ebp, [count];;mov our counter into a register for comparing
+    76 0000003D 83FD1C                  	cmp ebp,79-msglen;;cmp our counter to 79- our msg length
+    77 00000040 7440                    	je dec;;jump to decrementing when we get to a total of 79 colomns to the right
+    78                                  inc:
+    79 00000042 45                      	inc ebp
+    80 00000043 892D[47000000]          	mov [count], ebp
+    81                                  
+    82 00000049 E2C0                    loop inctop
+    83                                  
+    84                                  dectop:;;decrementing loop
+    85 0000004B E8A6000000              call _clrscr
+    86                                  
+    87                                  	setCursor 10,[count]
+    88                              <1> 
+    89 00000050 B40A                <1>  mov ah,%1
+    90 00000052 A0[47000000]        <1>  mov al,%2
+    91 00000057 E83B000000          <1>  call cursor
+    92                              <1> 
+    93                                  	Print message,msglen
+    94 0000005C B804000000          <1>  mov eax, 4
+    95 00000061 BB01000000          <1>  mov ebx, 1
+    96 00000066 B9[00000000]        <1>  mov ecx, %1
+    97 0000006B BA33000000          <1>  mov edx, %2
+    98 00000070 CD80                <1>  int 80h
+    99                              <1> 
+   100 00000072 E86B000000              	call    _sleep
+   101                                  
+   102 00000077 8B2D[47000000]          	mov ebp,[count]
+   103 0000007D 83FD00                  	cmp ebp,0 ;;compare our counter to zero if equal send back to the right
+   104 00000080 74C0                    	je inc
+   105                                  dec:
+   106 00000082 4D                      	dec ebp
+   107 00000083 892D[47000000]          	mov [count], ebp
+   108                                  
+   109 00000089 E2C0                    loop dectop
+   110                                  
+   111                                  ; Normal termination code
+   112 0000008B B801000000              	mov eax, 1
+   113 00000090 BB00000000              	mov ebx, 0
+   114 00000095 CD80                    	int 80h
+   115                                  
+   116                                  ;. _setcursor expects AH = row, AL = col
+   117                                  ;  Only works for 1 or 2 digit numbers.
+   118                                  cursor:
+   119 00000097 60                      	pusha
+   120                                  ;;; save original to get col later
+   121 00000098 50                      	push	eax
+   122                                  ;;;;;; process row
+   123 00000099 66C1E808                	shr	ax,8	;; shift row to right
+   124 0000009D B30A                    	mov	bl,10
+   125 0000009F F6F3                    	div	bl	;; puts ax/10 in al, remainder in ah
+   126 000000A1 80C430                  	add	ah,'0'
+   127 000000A4 0430                    	add	al,'0'
+   128 000000A6 A2[39000000]            	mov	BYTE [row],al
+   129 000000AB 8825[3A000000]          	mov	BYTE [row+1],ah
+   130                                  ;;;; process col
+   131 000000B1 58                      	pop	eax	;; restore original parms
+   132 000000B2 6625FF00                	and	ax,0FFh ;; erase row, leave col
+   133 000000B6 B30A                    	mov	bl,10
+   134 000000B8 F6F3                    	div	bl	;; puts ax/10 in al, remainder in ah
+   135 000000BA 80C430                  	add	ah,'0'
+   136 000000BD 0430                    	add	al,'0'
+   137 000000BF A2[3C000000]            	mov	BYTE [col],al
+   138 000000C4 8825[3D000000]          	mov	BYTE [col+1],ah
+   139                                  
+   140                                  	;;;;; now print the set cursor codes
+   141 000000CA B804000000              	mov	eax,4
+   142 000000CF BB01000000              	mov	ebx,1
+   143 000000D4 B9[37000000]            	mov 	ecx,pos
+   144 000000D9 BA08000000              	mov	edx,8
+   145 000000DE CD80                    	int 	80h
+   146                                  
+   147 000000E0 61                      	popa
+   148 000000E1 C3                      	ret
+   149                                  
+   150                                  ;;;;; sleep requests sec,nanoseconds pause
+   151                                  _sleep:
+   152 000000E2 60                      	pusha
+   153 000000E3 B8A2000000              	mov	eax,162
+   154 000000E8 BB[3F000000]            	mov	ebx,sec
+   155 000000ED B900000000              	mov	ecx,0
+   156 000000F2 CD80                    	int	80h
+   157 000000F4 61                      	popa
+   158 000000F5 C3                      	ret
+   159                                  
+   160                                  ;;
+   161                                  _clrscr:
+   162 000000F6 60                      	pusha
+   163 000000F7 B804000000                      mov     eax,4
+   164 000000FC BB01000000                      mov     ebx,1
+   165 00000101 B9[33000000]                    mov     ecx,cls
+   166 00000106 BA04000000                      mov     edx,4
+   167 0000010B CD80                            int     80h
+   168 0000010D 61                      	popa
+   169 0000010E C3                      	ret
+   170                                  
+   171                                  
+   172                                  
+   173                                  
+   174                                  
+   175                                  

@@ -1,0 +1,73 @@
+     1                                  ; Dylan Resha
+     2                                  ; Assignment 3 summing integers
+     3                                  ; 9/28/2020
+     4                                  ; Write assembly language code that sums all of the elements in each of the arrays, and places the sum in the corresponding sum variable. 
+     5                                  ; Finally, place a grand total into the grandTotal variable.  Treat all of these values as signed integers.
+     6                                  
+     7                                  SECTION .data
+     8                                  ; define data/variables here.  Think DB, DW, DD, DQ
+     9                                  
+    10 00000000 FF02FD04FB06            bArray:		DB		-1,2,-3,4,-5,6
+    11 00000006 09000A000B000C000D-     wArray:		DW		09h,0ah,0bh,0ch,0dh
+    12 0000000F 00                 
+    13 00000010 F6FFFFFFECFFFFFFE2-     dArray:		DD		-10,-20,-30,-40,-50
+    14 00000019 FFFFFFD8FFFFFFCEFF-
+    15 00000022 FFFF               
+    16 00000024 00                      bArraySum:	DB		0
+    17 00000025 0000                    wArraySum:	DW		0
+    18 00000027 00000000                dArraySum:	DD		0
+    19 0000002B 00000000                grandTotal:	DD		0
+    20                                  
+    21                                  SECTION .bss
+    22                                  ; define uninitialized data here
+    23                                  
+    24                                  SECTION .text
+    25                                  global _main
+    26                                  _main:
+    27                                  
+    28                                  ; put your code here
+    29 00000000 A0[00000000]            	mov al,[bArray]
+    30 00000005 0205[01000000]          	add al,[bArray+1]
+    31 0000000B 0205[02000000]          	add al,[bArray+2]
+    32 00000011 0205[03000000]          	add al,[bArray+3]
+    33 00000017 0205[04000000]          	add al,[bArray+4]
+    34 0000001D 0205[05000000]          	add al,[bArray+5]
+    35 00000023 0005[24000000]          	add [bArraySum],al
+    36                                  	
+    37                                  break1:
+    38                                  
+    39 00000029 668B1D[06000000]                mov bx,[wArray]
+    40 00000030 66031D[08000000]                add bx,[wArray+2]
+    41 00000037 66031D[0A000000]                add bx,[wArray+4]
+    42 0000003E 66031D[0C000000]                add bx,[wArray+6]
+    43 00000045 66031D[0E000000]                add bx,[wArray+8]
+    44 0000004C 66891D[25000000]                mov [wArraySum],bx
+    45                                  
+    46                                  break2:
+    47                                  
+    48 00000053 8B15[10000000]                  mov edx,[dArray]
+    49 00000059 0315[14000000]                  add edx,[dArray+4]
+    50 0000005F 0315[18000000]                  add edx,[dArray+8]
+    51 00000065 0315[1C000000]                  add edx,[dArray+12]
+    52 0000006B 0315[20000000]                  add edx,[dArray+16]
+    53 00000071 8915[27000000]                  mov [dArraySum],edx
+    54                                  break3:
+    55                                  	
+    56 00000077 A0[24000000]            	mov al,[bArraySum]
+    57 0000007C 668B1D[25000000]        	mov bx,[wArraySum]
+    58 00000083 8B0D[27000000]          	mov ecx,[dArraySum]
+    59                                  	
+    60 00000089 0FBEC0                  	MOVSX eax,al
+    61 0000008C 0FBFDB                  	MOVSX ebx,bx	
+    62                                  
+    63 0000008F 01C1                    	add ecx,eax
+    64 00000091 01D9                    	add ecx,ebx
+    65                                  
+    66 00000093 890D[2B000000]          	mov [grandTotal], ecx
+    67                                  break4:
+    68                                  
+    69                                  lastBreak:
+    70                                  ; Normal termination code
+    71 00000099 B801000000              mov eax, 1
+    72 0000009E BB00000000              mov ebx, 0
+    73 000000A3 CD80                    int 80h

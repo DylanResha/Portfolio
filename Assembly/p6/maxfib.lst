@@ -1,0 +1,37 @@
+     1                                  ; Dylan Resha
+     2                                  ; Assignment 6 max fibonacci Sequence
+     3                                  ; 10/19/2020
+     4                                  ; Write code that calculates the largest unsigned fibonacci number that can be stored in a double word
+     5                                   
+     6                                  
+     7                                  SECTION .data
+     8                                  ; define data/variables here.  Think DB, DW, DD, DQ
+     9                                  
+    10                                  
+    11                                  SECTION .bss
+    12                                  ; define uninitialized data here
+    13 00000000 <res 00000004>          MaxFib: RESD 1
+    14                                  
+    15                                  SECTION .text
+    16                                  global _main
+    17                                  _main:
+    18                                  ; put your code here
+    19 00000000 B800000000              mov eax, 0
+    20 00000005 BB01000000              mov ebx, 1
+    21                                  
+    22                                  while:
+    23                                  
+    24 0000000A 89D9                    mov ecx,ebx
+    25 0000000C 01C3                    add ebx,eax
+    26 0000000E 89C8                    mov eax,ecx
+    27                                  b1:
+    28                                  
+    29 00000010 73F8                    jnc while
+    30                                  
+    31 00000012 A3[00000000]            mov [MaxFib],eax
+    32                                  
+    33                                  lastBreak:
+    34                                  ; Normal termination code
+    35 00000017 B801000000              mov eax, 1
+    36 0000001C BB00000000              mov ebx, 0
+    37 00000021 CD80                    int 80h
