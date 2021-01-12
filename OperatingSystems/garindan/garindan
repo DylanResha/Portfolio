@@ -1,0 +1,96 @@
+#!/bin/bash
+# Garindan
+# Dylan Resha
+#if just garindan print out information about the currently logged on users
+#if "garindan all" find out information about all users in our class (BEARSROCK)
+#lastly garindan for specif users shows just there info
+
+#if(args == 0)
+#  list = online users, who
+#else if(args == all)
+#  list = users in our class, grep BEARSROCK
+#else 
+#  list = $*
+
+if [ "$1" = "all" ] 
+then
+
+  userID=`grep BEARSROCK /etc/passwd | cut -d":" -f1`
+  
+  printf "%-25s" "User ID" "Full Name" "Phone Number" "TTY" "What"
+  echo
+  echo
+  for i in $userID; do
+    printf "%-25s" "`grep $i /etc/passwd | cut -d":" -f1`" 
+     
+    printf "%-25s" "`grep $i /etc/passwd | cut -d":" -f5 | cut -d"," -f1 | tr " " "_"`"  
+     
+    printf "%-25s" "`grep $i /etc/passwd | cut -d":" -f5 | cut -d"," -f3 | tr " " "_"`" 
+    
+    if [ "`who | grep $i`" != "" ];
+     then    
+      printf "%-25s" "`who | grep -v root |  tr -s " " | grep $i | cut -d" " -f2`"
+      printf "%-25s" "`w -h $i | tr -s " " | cut -d" " -f8-`"
+     else
+     printf "%-25s" "NOT ON"
+     printf "%-25s" "-"
+    fi 
+    
+    printf $'\n' 
+      
+  done
+  
+
+elif [ "$1" = "" ]
+then
+ 
+  userID=`who | grep -v root | tr -s " " | cut -d" " -f1`
+  
+  printf "%-25s" "User ID" "Full Name" "Phone Number" "TTY" "What"
+  echo
+  echo
+  
+  for i in $userID; do
+    printf "%-25s" "`who | grep -v root |  tr -s " " | grep $i | cut -d" " -f1`" 
+     
+    printf "%-25s" "`grep $i /etc/passwd | cut -d":" -f5 | cut -d"," -f1`"  
+     
+    printf "%-25s" "`grep $i /etc/passwd | cut -d":" -f5 | cut -d"," -f3`" 
+            
+    printf "%-25s" "`who | grep -v root |  tr -s " " | grep $i | cut -d" " -f2`" 
+    
+    printf "%-25s" "`w -h $i | tr -s " " | cut -d" " -f8-`"
+
+    printf $'\n' 
+    
+  done
+ 
+else
+ 
+ 
+  printf "%-25s" "User ID" "Full Name" "Phone Number" "TTY" "What"
+  echo
+  echo
+  for i in $*; do
+    printf "%-25s" "`grep $i /etc/passwd | cut -d":" -f1`" 
+     
+    printf "%-25s" "`grep $i /etc/passwd | cut -d":" -f5 | cut -d"," -f1 | tr " " "_"`"  
+     
+    printf "%-25s" "`grep $i /etc/passwd | cut -d":" -f5 | cut -d"," -f3 | tr " " "_"`" 
+    
+    if [ "`who | grep $i`" != "" ];
+     then    
+      printf "%-25s" "`who | grep -v root | grep $i | cut -d" " -f2`"
+      printf "%-25s" "`w -h $i | tr -s " " | cut -d" " -f8-`"
+     else
+     printf "%-25s" "NOT ON"
+     printf "%-25s" "-"
+    fi 
+    
+    printf $'\n' 
+      
+  done
+  
+fi
+####################################################################################################
+#$*

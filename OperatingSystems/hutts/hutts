@@ -1,0 +1,162 @@
+#!/bin/bash
+#hutts
+#Dylan Resha
+#csc 460
+#
+cmd='empty'
+args='empty'
+clear
+while (test "$cmd" != "huttsout") do
+#prompt
+printf "%s" "Hutts >"
+#read input
+read cmd args
+
+if (test "$cmd" != "huttsout") then
+################################################################################# 
+#huttsshow- use less on file 
+ if(test "$cmd" = "huttsshow")then
+ less $args
+ fi
+################################################################################# 
+ if(test "$cmd" = "huttscall")then
+ 
+  printf "%-25s" "Full name" "Office Phone Number"
+  echo
+  printf "%-25s" "`grep $args /etc/passwd | cut -d":" -f5 | cut -d"," -f1`" "`grep $args /etc/passwd | cut -d":" -f5 | cut -d"," -f3`"
+  echo
+ fi
+################################################################################# 
+#huttslist- list full names of everyone currently online
+ if(test "$cmd" = "huttslist")then
+   userID=`who | grep -v root | tr -s " " | cut -d" " -f1`
+   for i in $userID; do
+   printf "%s" "`grep $i /etc/passwd | cut -d":" -f5 | cut -d"," -f1`"
+   echo
+   done
+ fi
+################################################################################# 
+ if(test "$cmd" = "huttsstuff")then
+  ls -1 
+ fi
+################################################################################# 
+ if(test "$cmd" = "helphutts")then
+  echo List Of Commands
+  echo ----------------
+  echo huttsshow  filename
+  echo huttscall  userid
+  echo huttslist
+  echo huttsstuff
+  echo helphutts
+  echo hutty
+  echo huttify
+  echo garindan args
+  echo huttsout
+  echo ----------------
+ fi
+################################################################################# 
+ if(test "$cmd" = "bighutt")then
+  printf "%s" "Entering a regular bash Shell"
+  sleep 1
+  clear
+  bash
+ fi
+################################################################################# 
+ if(test "$cmd" = "hutty")then
+  line1=('w' 'h' 'a' 't' '_' 'h' 'a' 'v' 'e' '_' 'y' 'o' 'u' '_' 'd' 'o' 'n' 'e' '!' '!' '!')
+  line2=('a' 'r' 'e' '_' 'y' 'o' 'u' '_' 'i' 'n' 's' 'a' 'n' 'e' '!' '!' '!')
+  line3=('y' 'o' 'u' '_' 'j' 'u' 's' 't' '_' 's' 'e' 't' '_' 'o' 'f' 'f' '_' 'a' '_' 'B' 'O' 'M' 'B' '!' '!' '!')
+  line4=('w' 'e' 'l' 'l' '_' 'I' '_' 'h' 'o' 'p' 'e' '_' 'y' 'o' 'u' "'" 'r' 'e' '_' 'h' 'a' 'p' 'p' 'y')
+  line5=('n' 'o' 'w' '_' 'I' '_' 'c' 'a' 'n' "'" 't' '_' 'w' 'o' 'r' 'k' '_' 'o' 'n' '_' 'm' 'y' '_' '4' '6' '0' '_' 'p' 'r' 'o' 'j' 'e' 'c' 't' 's')
+  line6=('10' '9' '8' '7' '6' '5' '4' '3' '2' '1' '0')
+  line7=('h' 'u' 'h' '?' '_' 'I' '_' 'g' 'u' 'e' 's' 's' '_' 'i' 't' '_' 'w' 'a' 's' '_' 'a' '_' 'f' 'a' 'l' 's' 'e' '_' 'a' 'l' '.' '.' '.')
+
+#first line of text  
+  clear
+  printf "%s" "Hutt AI> "
+  for i in ${line1[@]}; do
+  echo -n $i
+  sleep 0.1
+  done  
+  sleep 1
+#second line of text
+  clear
+  printf "%s" "Hutt AI> "
+  for i in ${line2[@]}; do
+  echo -n $i
+  sleep 0.1
+  done  
+  sleep 1
+#third line of text
+  clear
+  printf "%s" "Hutt AI> "
+  for i in ${line3[@]}; do
+  echo -n $i
+  sleep 0.1
+  done  
+  sleep 1
+#fourth line of text
+  clear
+  printf "%s" "Hutt AI> "
+  for i in ${line4[@]}; do
+  echo -n $i
+  sleep 0.1
+  done  
+  sleep 1
+#fifth line of text
+  clear
+  printf "%s" "Hutt AI> "
+  for i in ${line5[@]}; do
+  echo -n $i
+  sleep 0.1
+  done 
+  sleep 1 
+#internal line of text
+  clear
+  printf "%s" "Internal System Message> Countdown Initiated"
+  sleep 1
+#sixth line of text
+  clear
+  for i in ${line6[@]}; do
+  echo $i
+  sleep 1
+  done 
+  sleep 1
+#seventh line of text
+  clear
+  printf "%s" "Hutt AI> "
+  for i in ${line7[@]}; do
+  echo -n $i
+  sleep 0.1
+  done 
+  sleep 1
+#eigth line of text
+  clear
+  echo BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM
+  sleep 1
+  clear
+#bomb
+exit
+  
+ fi
+################################################################################# 
+ if(test "$cmd" = "huttify")then
+  vi $args
+ fi
+################################################################################# 
+ if(test "$cmd" = "garindan")then
+  cd ..
+  cd garindan
+  garindan $args
+  cd .. 
+  cd hutts
+ fi
+################################################################################# 
+ if(test "$cmd" != "huttsout"&& test "$cmd" != "garindan"&& test "$cmd" != "huttify"&& test "$cmd" != "hutty"&& test "$cmd" != "bighutt"&& test "$cmd" != "helphutts"&& test "$cmd" != "huttsstuff"&& test "$cmd" != "huttslist"&& test "$cmd" != "huttscall"&& test "$cmd" != "huttshow")then
+ printf "%s" "You must be atleast a 9th level computer science devotee in order to access this ability"
+ echo
+ fi
+################################################################################# 
+fi
+
+done
